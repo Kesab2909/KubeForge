@@ -230,20 +230,49 @@ Open:
 
 Container CPU and memory usage metrics were not available in the current Prometheus setup during development; the dashboard therefore uses the available restart-count metric for its sixth panel.
 
-## Terraform
+## Terraform and AWS Deployment
 
-The Terraform configuration requires Terraform `>= 1.5.0` and declares the Docker provider.
+KubeForge includes two Terraform configurations:
 
-Validate the configuration:
+- `terraform/` — configuration for the existing AWS environment. Its resources were imported into Terraform state; the original EC2 server was created manually.
+- `terraform/fresh/` — a separate configuration that provisions a fresh AWS deployment, including a VPC, public subnet, internet gateway, route table, security group, and EC2 instance.
+
+### Fresh deployment architecture
+
+The fresh configuration provisions an Amazon Linux EC2 instance (`t3.micro`) in `ap-southeast-2` and uses EC2 user data to install Docker, pull the published KubeForge API image from GHCR, and run the container on port 80.
+
+The root volume is an encrypted 8 GB `gp3` EBS volume. The security group permits inbound HTTP on port 80. This demonstration uses HTTP, not HTTPS, and should not be treated as a production-hardened public deployment.
+
+### Deploy
+
+From the repository root in PowerShell:
 
 ```powershell
-terraform -chdir=terraform init
-terraform -chdir=terraform fmt -check -recursive
-terraform -chdir=terraform validate
-terraform -chdir=terraform plan
+terraform -chdir=terraform/fresh init
+terraform -chdir=terraform/fresh fmt
+terraform -chdir=terraform/fresh validate
+terraform -chdir=terraform/fresh plan
 ```
 
-The current configuration declares an image-name variable and outputs the image reference. It does **not** create cloud infrastructure or provision AWS resources. Do not treat a successful plan or validation as a cloud deployment.
+Review the plan before applying it. The fresh deployment creates separate AWS resources and can incur charges.
+
+```powershell
+terraform -chdir=terraform/fresh apply
+terraform -chdir=terraform/fresh output
+```
+
+The outputs provide the API URL, health-check URL, and EC2 instance ID. The deployed API was verified at the time of testing: the root endpoint returned the expected KubeForge application metadata, and `/health` returned `healthy`.
+
+### Important state and cleanup notes
+
+- The fresh configuration has its own Terraform state under `terraform/fresh/`.
+- Terraform state files and saved plan files must not be committed to Git.
+- The original manually deployed server is separate from the fresh deployment.
+- Review the plan carefully before applying changes or destroying resources.
+- When the demonstration is no longer needed, review the resources and costs in AWS. Destroy only the fresh resources after confirming the plan targets the correct configuration and state.
+
+The configuration is a learning demonstration, not a complete production landing zone. HTTPS, stronger network restrictions, centralized secrets, and production-grade remote state management remain possible improvements.
+
 
 ## Current Validation Status
 
@@ -261,10 +290,11 @@ These are recorded development results, not a guarantee that every environment o
 
 ## Limitations and Future Improvements
 
-- No AWS infrastructure is provisioned by the current Terraform configuration.
-- Container CPU and memory time-series metrics need additional Prometheus integration if required.
-- Add architecture diagrams, dashboard screenshots, deployment runbooks, and incident reports as they are created and verified.
-- Validate security policies, resource limits, and deployment settings before using this demonstration in production.
+- The `terraform/fresh/` configuration provisions a fresh AWS deployment, while the original `terraform/` configuration manages resources associated with the existing AWS environment.
+- Container CPU and memory time-series metrics can be expanded through additional Prometheus exporters and monitoring configuration.
+- Enhance the project documentation with architecture diagrams, deployment runbooks, and detailed troubleshooting reports as they are completed and verified. AWS deployment screenshots and Grafana dashboard screenshots are available in `docs/screenshots/`.
+- The current AWS demonstration uses HTTP without TLS and is not production-hardened. Future improvements include HTTPS, stricter network access controls, enhanced secrets management, and additional security validation.
+- Review Terraform plans, AWS resource costs, Kubernetes resource limits, security policies, and deployment settings before applying infrastructure changes or using the project in production.
 
 ## License
 
