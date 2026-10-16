@@ -14,7 +14,7 @@ spec:
         replicaCount: 2
         image:
           repository: ghcr.io/kesab2909/kubeforge-api
-          tag: latest
+          tag: d3748d586ca82ea494335cf54d91c0315da6499d
           pullPolicy: Always
         autoscaling:
           enabled: true
