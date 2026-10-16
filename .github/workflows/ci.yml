@@ -92,7 +92,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
       - name: Run Trivy dependency vulnerability scan
-        uses: aquasecurity/trivy-action@0.33.1
+        uses: aquasecurity/trivy-action@master
         with:
           scan-type: fs
           scan-ref: application/
@@ -126,7 +126,7 @@ jobs:
           tags: kubeforge-api:ci
 
       - name: Scan container image with Trivy
-        uses: aquasecurity/trivy-action@0.33.1
+        uses: aquasecurity/trivy-action@master
         with:
           scan-type: image
           image-ref: kubeforge-api:ci
@@ -149,3 +149,4 @@ jobs:
           docker tag kubeforge-api:ci ghcr.io/kesab2909/kubeforge-api:${{ github.sha }}
           docker push ghcr.io/kesab2909/kubeforge-api:latest
           docker push ghcr.io/kesab2909/kubeforge-api:${{ github.sha }}
+
