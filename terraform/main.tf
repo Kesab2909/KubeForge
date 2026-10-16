@@ -1,3 +1,4 @@
+
 terraform {
   required_version = ">= 1.5.0"
 
@@ -6,7 +7,15 @@ terraform {
       source  = "kreuzwerker/docker"
       version = "~> 3.0"
     }
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 6.0"
+    }
   }
+}
+
+provider "aws" {
+  region = "ap-southeast-2"
 }
 
 variable "image_name" {
