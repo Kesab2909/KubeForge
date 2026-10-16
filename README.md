@@ -296,6 +296,13 @@ These are recorded development results, not a guarantee that every environment o
 - The current AWS demonstration uses HTTP without TLS and is not production-hardened. Future improvements include HTTPS, stricter network access controls, enhanced secrets management, and additional security validation.
 - Review Terraform plans, AWS resource costs, Kubernetes resource limits, security policies, and deployment settings before applying infrastructure changes or using the project in production.
 
+## 📽️ Project Presentation & Demo
+
+- **Project Presentation:** [View KubeForge Presentation](pptx/KubeForge-Presentation.pptx)
+- **Live Demo Video:** [Watch KubeForge Demo on Google Drive](https://drive.google.com/file/d/1f7E5M945S50JVcX0ydbYfhJVc2MMhG-e/view?usp=drive_link)
+
+> The demo showcases the KubeForge architecture, AWS deployment, GitHub Actions CI/CD pipeline, Kubernetes and Helm, Argo CD GitOps, monitoring, and troubleshooting workflow.
+
 ## License
 
 No license is declared yet. Add a `LICENSE` file before distributing the project under an open-source license.
