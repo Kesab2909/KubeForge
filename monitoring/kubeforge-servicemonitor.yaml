@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: kubeforge
+  namespace: monitoring
+  labels:
+    release: monitoring
+spec:
+  namespaceSelector:
+    matchNames:
+      - kubeforge-helm
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: kubeforge
+      app.kubernetes.io/instance: kubeforge
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 30s

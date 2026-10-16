@@ -26,3 +26,7 @@ override.tf.json
 .idea/
 .DS_Store
 Thumbs.db
+
+# Generated Kubernetes manifests
+applicationset-crd.yaml
+monitoring/rendered.yaml
